@@ -21,11 +21,11 @@ react-icon library
 
 What is the Difference Between SPAs, SSGs, and SSR?
 SPA - 
->You do have an HTML file, React loads in that HTML and dynamically updates content via JS. Example: a normal React app build with create-react-app.
-SSG - 
->The server generates HTML on every request. You don’t just serve a static index  the server builds the page with data, sends full HTML to the browser. Example: Next.js with getServerSideProps.
-SSR -
->HTML is pre-built at build time, not per request. Works great for mostly static content (blogs, docs). Example: Next.js with getStaticProps, Gatsby sites.
+>SPA (Single Page App): React app that loads one HTML file, then JS swaps components. (CRA example)
+
+>SSG (Static Site Generation): HTML is pre-built at build time. (Next.js getStaticProps, Gatsby)
+
+>SSR (Server-Side Rendering): HTML is generated on each request by the server. (Next.js getServerSideProps)
 
 In SPA (react app in our acse), clicking a “page” link -> component swap, no reload.
 React Router used here to maps URLs -> components.
@@ -117,4 +117,126 @@ export default JobPage;
 ~~~
 
 using react data loaders:
+  ~~~javascript
+  import { useParams, useLoaderData } from 'react-router-dom'
+  const job = useLoaderData()
+
+<h1 className="text-3xl font-bold mb-4">
+  {job.title}
+</h1>
+  ~~~
+
+  Working with forms:
+  1.refs or fornic
+  2. most common way is using usestate
+
+2.=>
+~~~javascript
+const [title, setTitle] = useState(job.title);
+const [type, setType] = useState(job.type);
+...
+
+const formSubmit = (e)=>{
+            e.preventDefault()
+    
+            const updatedJob = {
+                id,
+                title,
+                ...
+~~~
+
+DELETE:
+~~~Javascript
+const deletejob = async (jobId) => {
+const res = await fetch(`/api/jobs/${jobId}`,
+  {
+      method: 'DELETE',
+    }
+  )
+  return
+  }
+~~~
+
+Update:
+~~~Javascript
+  const updatejob = async (job)=>{
+    const res = await fetch(`/api/jobs/${job.id}`,{
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(job)
+    })
+  return
+  }
+~~~
+then passing it as a prop
+
+~~~javascript
+<Route path='/edit-job/:id' element={***<EditJobPage updatejob={updatejob}/>***} loader={jobLoader}/>
+~~~
+
+then calling it with updated data 
+~~~javascript
+updatejob(updatedJob);
+~~~
+
+Other imps:
+  ~~~javascript
+  const confirm = window.confirm('Are you sure you want to delete this listings?')
+  ~~~
+  toastify:
+  ~~~javascript
+    // import
+    import { ToastContainer } from 'react-toastify';
+    import 'react-toastify/dist/ReactToastify.css'
+    ...
+    // Use the ToastContainer once in the root component
+    <ToastContainer />
   
+    // import toast in the child component 
+    import { toast } from 'react-toastify';
+    // then, Trigger a toast notification
+    toast.success('Jobdeleted successfully!')
+  ~~~
+  
+  ~~~javascript
+      const confirmDelete = async (id) => {
+      if (window.confirm('Are you sure you want to delete this listing?')) {
+        await deleteJob(id);
+        toast.success('Job deleted successfully!');
+      }
+    }
+  ~~~
+
+  proxy:
+  its just like setting up a variable we set up our backend  and initialize it as /api so if we deploy we dont need to change every file but this way its just one time and it also shut down errors like cross-origin request
+  ~~~javascript
+  proxy:{
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
+    }
+  ~~~
+
+  spinners:
+  ~~~javascript
+  // import
+  import Spinners from './Spinners'
+  // then load it as a component
+  {loading ? ( ***<Spinners loading={loading} />***) : event()}
+  ~~~
+
+  useNavigate:
+  ~~~javascript
+  // import
+  import { useNavigate } from 'react-router-dom';
+  // initialize
+  const navigate = useNavigate()
+  // call it 
+  return navigate('/jobs')
+  // or 
+  const handleClick = () => navigate('/jobs');
+  ~~~

@@ -1,11 +1,25 @@
 import React from 'react'
-import { useParams, useLoaderData } from 'react-router-dom'
+import { useParams, useLoaderData, useNavigate } from 'react-router-dom'
 import {FaArrowLeft, FaMapMarker} from 'react-icons/fa'
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
-const JobPage = () => {
+const JobPage = ({deletejob}) => {
+    const navigate = useNavigate()
     const {id} = useParams()
     const job = useLoaderData()
+
+    const onDeleteClick = (jobId)=>{
+        const confirm = window.confirm('Are you sure you want to delete this listings?')
+
+        if (!confirm) return;
+
+        deletejob(jobId)
+
+        toast.success('Job deleted successfully!')
+
+        navigate('/jobs')
+    }
   return (
     <>
         <section>
@@ -34,7 +48,7 @@ const JobPage = () => {
                     <div
                         className="text-gray-500 mb-4 flex align-middle justify-center md:justify-start"
                     >
-                    <FaMapMarker className='inline text-lg mr-2 mb-1'/>
+                    <FaMapMarker className='inline text-lg mr-2 mb-1 text-orange-700'/>
                         <p className="text-orange-700">{job.location}</p>
                     </div>
                     </div>
@@ -83,12 +97,13 @@ const JobPage = () => {
                     <div className="bg-white p-6 rounded-lg shadow-md mt-6">
                     <h3 className="text-xl font-bold mb-6">Manage Job</h3>
                     <Link
-                        to="/add-job"
+                        to={`/edit-job/${job.id}`}
                         className="bg-indigo-500 hover:bg-indigo-600 text-white text-center font-bold py-2 px-4 rounded-full w-full focus:outline-none focus:shadow-outline mt-4 block"
                         >Edit Job</Link
                     >
                     <button
-                        className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-full w-full focus:outline-none focus:shadow-outline mt-4 block"
+                        onClick={()=>onDeleteClick(job.id)}
+                        className="bg-red-500 hover:bg-red-600 cursor-pointer text-white font-bold py-2 px-4 rounded-full w-full focus:outline-none focus:shadow-outline mt-4 block"
                     >
                         Delete Job
                     </button>
